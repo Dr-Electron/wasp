@@ -26,13 +26,18 @@ const ShimmerCoinType = uint32(4219)
 
 // SubSeed returns a Seed (ed25519 Seed) from a master seed (that has arbitrary length)
 // note that the accountIndex is actually an uint31
-func SubSeed(walletSeed []byte, accountIndex uint32, useLegacyDerivation ...bool) Seed {
-	if len(useLegacyDerivation) > 0 && useLegacyDerivation[0] {
+// params can be a bool to enable legacy derivation and
+// a uint32 as second parameter to specify the coinType 
+func SubSeed(walletSeed []byte, accountIndex uint32, params ...interface{}) Seed {
+	if len(params) > 0 && params[0].(bool) {
 		seed := SeedFromBytes(walletSeed)
 		return legacyDerivation(&seed, accountIndex)
 	}
 
 	coinType := TestnetCoinType // default to the testnet
+	if len(params) > 1 {
+		coinType = params[1].(uint32)
+	}
 	switch parameters.L1().Protocol.Bech32HRP {
 	case "iota":
 		coinType = IotaCoinType

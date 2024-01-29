@@ -18,6 +18,8 @@ type Wallet struct {
 func Load() *Wallet {
 	seedHex := viper.GetString("wallet.seed")
 	useLegacyDerivation := viper.GetBool("wallet.useLegacyDerivation")
+	useCoinType := viper.IsSet("wallet.coinType")
+	coinType := viper.GetUint32("wallet.coinType")
 	if seedHex == "" {
 		log.Fatal("call `init` first")
 	}
@@ -25,7 +27,12 @@ func Load() *Wallet {
 	masterSeed, err := iotago.DecodeHex(seedHex)
 	log.Check(err)
 
-	kp := cryptolib.KeyPairFromSeed(cryptolib.SubSeed(masterSeed, uint32(AddressIndex), useLegacyDerivation))
+	subSeed := cryptolib.SubSeed(masterSeed, uint32(AddressIndex), useLegacyDerivation)
+	if useCoinType {
+		subSeed = cryptolib.SubSeed(masterSeed, uint32(AddressIndex), useLegacyDerivation, coinType)
+	}
+
+	kp := cryptolib.KeyPairFromSeed(subSeed)
 
 	return &Wallet{KeyPair: kp, AddressIndex: AddressIndex}
 }
