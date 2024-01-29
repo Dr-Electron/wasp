@@ -27,7 +27,7 @@ const ShimmerCoinType = uint32(4219)
 // SubSeed returns a Seed (ed25519 Seed) from a master seed (that has arbitrary length)
 // note that the accountIndex is actually an uint31
 // params can be a bool to enable legacy derivation and
-// a uint32 as second parameter to specify the coinType 
+// a uint32 as second parameter to specify the coinType
 func SubSeed(walletSeed []byte, accountIndex uint32, params ...interface{}) Seed {
 	if len(params) > 0 && params[0].(bool) {
 		seed := SeedFromBytes(walletSeed)
