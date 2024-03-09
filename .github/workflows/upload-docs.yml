@@ -29,7 +29,6 @@ jobs:
         run: |
           cd tools/evm/docs-generator
           yarn && yarn gen-docs:all
-          cd -
 
       - name: Compress generated docs
         run: |
